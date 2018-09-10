@@ -1,0 +1,50 @@
+syntax = "proto3";
+package look.meta;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
+
+option java_package = "com.liukai.proto.data";
+option java_outer_classname = "RpcModel";
+
+message LongList {
+  repeated int64 value = 1;
+}
+message StringList {
+  repeated string value = 1;
+}
+message AnyList {
+  repeated google.protobuf.Any value = 1;
+}
+message LongKeyMap {
+  map<int64, google.protobuf.Any> key_value = 1;
+}
+message StringKeyMap {
+  map<string, google.protobuf.Any> key_value = 1;
+}
+message UpdateReq {
+  google.protobuf.Any new_value = 1;
+  google.protobuf.Any old_value = 2;
+}
+message ListReq {
+  google.protobuf.Any query = 1;
+
+  int64 offset = 20;
+  // <=0: no limit
+  int32 limit = 21;
+  // key: field; value: sort direction, true for asc, false for desc
+  map<string, bool> sort = 22;
+}
+message ListResp {
+  repeated google.protobuf.Any value = 1;
+
+  int32 total = 20;
+}
+message PingResp {
+  string host = 1;
+  string service_name = 2;
+  int64 ping_time = 3;
+  // ping的结果，每一项的结果都用string表示，若出错使用"ERROR: <msg>"表示
+  map<string, string> ping_item = 4;
+}

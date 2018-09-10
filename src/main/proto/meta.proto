@@ -1,0 +1,15 @@
+syntax = "proto3";
+package look.meta;
+
+option java_package = "com.liukai.proto";
+option java_outer_classname = "MetaModel";
+
+message Brand {
+	// 修改表的initial value=10000
+	int64 id = 1;
+	// 英文名
+	string name_en = 2;
+	// 中文名
+	string name_zh = 3;
+}
+

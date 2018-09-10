@@ -1,0 +1,101 @@
+// 使用新版的gradle 插件
+plugins {
+    id 'java'
+    id 'idea'
+    //
+    id "com.google.protobuf" version "0.8.6"
+}
+
+group 'com.liukai'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    maven { url "https://plugins.gradle.org/m2/" }
+
+}
+
+// 设置项目结构
+sourceSets {
+    main {
+        proto {
+            // In addition to the default 'src/main/proto'
+//            srcDir 'src/main/protobuf'
+//            srcDir 'src/main/protocolbuffers'
+            // In addition to the default '**/*.proto' (use with caution).
+            // Using an extension other than 'proto' is NOT recommended,
+            // because when proto files are published along with class files, we can
+            // only tell the type of a file from its extension.
+//            include '**/*.protodevel'
+        }
+        java {
+            srcDir 'src/main/java'
+        }
+    }
+    test {
+        proto {
+            // In addition to the default 'src/test/proto'
+            srcDir 'src/test/protocolbuffers'
+        }
+    }
+}
+
+protobuf {
+    generatedFilesBaseDir = "$projectDir/src"
+
+    // 指定protoc3.0.0编译器
+    protoc {
+        // Download from repositories
+        artifact = 'com.google.protobuf:protoc:3.0.0'
+    }
+
+    // 插件
+    plugins {
+        // Define a plugin with name 'grpc'
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.0.0-pre2'
+            // or
+            // path = 'tools/protoc-gen-grpc-java'
+        }
+        // Any other plugins
+
+    }
+
+    // 制定 proto grpc task
+    generateProtoTasks {
+
+        ofSourceSet('main')*.plugins {
+            // Apply the "grpc" plugin whose spec is defined above, without
+            // options.  Note the braces cannot be omitted, otherwise the
+            // plugin will not be added. This is because of the implicit way
+            // NamedDomainObjectContainer binds the methods.
+            grpc {
+                // Write the generated files under
+                // "$generatedFilesBaseDir/$sourceSet/grpcjava"
+                outputSubDir = 'java'
+            }
+        }
+
+        // or
+//        all().each { task ->
+//            task.plugins {
+//                grpc {
+//                    // Write the generated files under
+//                    // "$generatedFilesBaseDir/$sourceSet/grpcjava"
+//                    outputSubDir = 'java'
+//                }
+//            }
+//        }
+    }
+}
+
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    compile 'com.google.protobuf:protobuf-java:3.0.0'
+    compile 'io.grpc:grpc-stub:1.0.0-pre2'
+    compile 'io.grpc:grpc-protobuf:1.0.0-pre2'
+}
+
